@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>discgolf.Server</RootNamespace>
+    <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+    <UserSecretsId>ce23313b-7f0c-4bf0-a271-cb2b57315ac7</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.8" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client\discgolf.Client.csproj" />
+    <ProjectReference Include="..\Shared\discgolf.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>

@@ -1,0 +1,67 @@
+﻿@page "/"
+@using discgolf.Shared
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>New Game</PageTitle>
+<h1>@Date</h1>
+
+@if (Scores == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var Score in Scores)
+        {
+            <div class="col-sm-6">
+                <div class="card">
+                    <img class="card-img-top" src="/images/hole-@(Score.Hole).jpg" height="250" width="100">
+                    <div class="card-body">
+                        <h5 class="card-title">⛳ Hole @Score.Hole</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            🏌️‍♀️ Katherine:
+                            <input type="number"
+                           @bind-value="@Score.Katherine" />
+                        </li>
+                        <li class="list-group-item">
+                            &nbsp;&nbsp;&nbsp;&nbsp;🏌️‍♂ Robert:
+                            <input type="number"
+                           @bind-value="@Score.Robert" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <button @onclick="Submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+    </div>
+}
+
+@code {
+    public string Date = DateTime.Today.ToString("D");
+    public List<Score> Scores = new List<Score>();
+
+    protected override void OnInitialized()
+    {
+        for (int i = 1; i < 19; i++)
+        {
+            Score s = new Score();
+            s.Date = Date;
+            s.Katherine = 0;
+            s.Robert = 0;
+            s.Hole = i;
+            Scores.Add(s);
+        }
+    }
+
+    public async void Submit()
+    {
+        await Http.PostAsJsonAsync<List<Score>>("/api/score/", Scores);
+        NavigationManager.NavigateTo($"/games/{Date}");
+    }
+}

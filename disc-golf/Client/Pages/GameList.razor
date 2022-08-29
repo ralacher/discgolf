@@ -1,0 +1,51 @@
+﻿@page "/games"
+@using discgolf.Shared
+@inject HttpClient Http
+
+<PageTitle>Scores</PageTitle>
+<h1>Frisbee Golf Scores</h1>
+
+@if (Scores == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Katherine</th>
+                <th>Robert</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Score in Scores)
+            {
+                <tr>
+                    <td><a href="/games/@Score.Date">@Score.Date</a></td>
+                    <td>@Score.Katherine</td>
+                    <td>@Score.Robert</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private dynamic Scores;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var AllScores = await Http.GetFromJsonAsync<List<Score>>("/api/score/");
+        Console.WriteLine(AllScores);
+        Scores = AllScores
+            .GroupBy(Score => Score.Date)
+            .Select(Score => new
+            {
+                Date = Score.Key,
+                Katherine = Score.Sum(Player => Player.Katherine),
+                Robert = Score.Sum(Player => Player.Robert)
+            }).ToList();
+    }
+}

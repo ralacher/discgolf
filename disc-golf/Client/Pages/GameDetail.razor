@@ -1,0 +1,57 @@
+﻿@page "/games/{date}"
+@using discgolf.Shared
+@inject HttpClient Http
+
+<PageTitle>Scores</PageTitle>
+<h1>@Date Results</h1>
+
+@if (Scores == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Hole</th>
+                <th>Katherine</th>
+                <th>Robert</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Score in Scores)
+            {
+                <tr>
+                    <td>@Score.Hole</td>
+                    <td>@Score.Katherine</td>
+                    <td>@Score.Robert</td>
+                </tr>
+            }
+            <tr>
+                <td><b>Total</b></td>
+                <td>@Katherine</td>
+                <td>@Robert</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public string? Date { get; set; }
+    private dynamic? Scores;
+    private int Katherine;
+    private int Robert;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var AllScores = await Http.GetFromJsonAsync<List<Score>>($"/api/score/{Date}");
+        Scores = AllScores.Where(Score => Score.Date == Date);
+        foreach (Score s in Scores)
+        {
+            Katherine += s.Katherine;
+            Robert += s.Robert;
+        }
+    }
+}
